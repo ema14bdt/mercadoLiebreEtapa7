@@ -8,6 +8,8 @@ const toThousand = require('../utils/toThousand');
 const finalPrice = require('../utils/finalPrice');
 const saveJSON = () => fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2), 'utf-8');
 
+const checkID = require('../utils/checkID');
+
 const controller = {
    // Root - Show all products
    index: (req, res) => {
@@ -20,14 +22,19 @@ const controller = {
 
    // Detail - Detail from one product
    detail: (req, res) => {
-      let productDetail = products.find((producto) => producto.id === +req.params.id);
+      const idValido = parseInt(req.params.id, 10);
+      if (checkID(idValido, products)) {
+         let productDetail = products.find((producto) => producto.id === idValido);
 
-      res.render('detail', {
-         productDetail,
-         products,
-         toThousand,
-         finalPrice,
-      });
+         res.render('detail', {
+            productDetail,
+            products,
+            toThousand,
+            finalPrice,
+         });
+      } else {
+         res.redirect('/')
+      }
    },
 
    // Create - Form to create
